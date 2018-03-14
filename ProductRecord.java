@@ -53,7 +53,9 @@ public class ProductRecord {
 
   public int hashCode() {
     int h = 0;
-      
+    for (int i = 0; i < name.length(); i++){
+      h = 31 * h + name.charAt(i);
+    }
     return h;
   }
 }
