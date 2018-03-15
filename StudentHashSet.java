@@ -16,35 +16,39 @@ public class StudentHashSet {
     if (loadFactor > .5) //resize the set if the loadFactor goes above a certain value
       resize();         // ensures that the hashSet continues running at close to O(1) speed
     if (!this.contains(s)){
+      try{
       hashSet[linearProbe(s)] = s;
       size++;
       loadFactor = ((double) size) / capacity;
+      }catch (Exception exc){}
     }
   }
 //------------------------------------------------------------------------------
   //Finds the next index at which Student s should be placed within hashSet
   private int linearProbe(Student s){
+    boolean notFound = false;
     int h = s.hashCode();
     int index = h % capacity;
     for (int i = index; i < capacity; i++){
-      if (hashSet[i].hashCode() == 0)
+      if (hashSet[i] == null)
         return i;
     }
     for (int i = 0; i < index; i++){
-      if (hashSet[i].hashCode() == 0)
+      if (hashSet[i] == null)
         return i;
     }
-    return -1;
+      return -1;
   }
 //------------------------------------------------------------------------------
   //copies all Students into a new Hashset that is larger by probing them to their new proper spots.
   //used when the loadFactor becomes too large
   private void resize(){
-    Student[] temp = new Student[capacity * 2 - 1];
-    this.capacity = temp.length;
-    for (Student s: hashSet){
-      temp[linearProbe(s)] = s;
+    Student[] temp = new Student[capacity * 2 + 1];
+    for (int i = 0; i < capacity; i++){
+      if(hashSet[i] != null)
+        temp[linearProbe(hashSet[i])] = hashSet[i];
     }
+    capacity = temp.length;
     this.loadFactor = ((double) size) / capacity;
     this.hashSet = temp;
   }
@@ -57,7 +61,7 @@ public class StudentHashSet {
     int h = s.hashCode();
     int index = h % capacity;
     for (int i = index; i < capacity; i++){
-      if (hashSet[i].hashCode() == h){
+      if (hashSet[i] != null && hashSet[i].hashCode() == h){
         hashSet[i] = null;
         size--;
         loadFactor = size / capacity;
@@ -65,7 +69,7 @@ public class StudentHashSet {
       }
     }
     for (int i = 0; i < index; i++){
-      if (hashSet[i].hashCode() == h){
+      if (hashSet[i] != null && hashSet[i].hashCode() == h){
         hashSet[i] = null;
         return true;
       }
@@ -76,13 +80,13 @@ public class StudentHashSet {
   //Returns true if the Student is in the Hashset and false otherwise
   public boolean contains(Student s) {
     int h = s.hashCode();
-    int hIndex = h % capacity;
-    for (int i = hIndex; i < capacity; i++){
-      if (hashSet[i].hashCode() == h)
+    int index = h % capacity;
+    for (int i = index; i < capacity; i++){
+      if (hashSet[i] != null && hashSet[i].hashCode() == h)
         return true;
     }
-    for(int i = 0; i < hIndex; i++){
-      if (hashSet[i].hashCode() == h)
+    for(int i = 0; i < index; i++){
+      if (hashSet[i] != null && hashSet[i].hashCode() == h)
         return true;
     }
     return false;
